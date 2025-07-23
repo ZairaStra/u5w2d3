@@ -1,10 +1,12 @@
 package zairastra.u5w2d3.services;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import zairastra.u5w2d3.entities.Blog;
 import zairastra.u5w2d3.exceptions.NotFoundException;
 import zairastra.u5w2d3.payloads.NewBlogPayload;
+import zairastra.u5w2d3.repositories.BlogsRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +15,10 @@ import java.util.List;
 @Service
 @Slf4j
 public class BlogsService {
+
+    @Autowired
+    private BlogsRepository blogsRepository;
+
     private List<Blog> blogsFakeDatabase = new ArrayList<>();
 
     //i metodi crud sono 5 -> mi servono 5 metodi

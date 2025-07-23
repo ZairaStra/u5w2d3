@@ -1,13 +1,12 @@
 package zairastra.u5w2d3.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import zairastra.u5w2d3.entities.Author;
 import zairastra.u5w2d3.payloads.NewAuthorPayload;
 import zairastra.u5w2d3.services.AuthorsService;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/authors")
@@ -16,9 +15,10 @@ public class AuthorController {
     @Autowired
     private AuthorsService authorsService;
 
-    @GetMapping
-    public List<Author> getAuthors() {
-        return this.authorsService.findAll();
+    @GetMapping // lo riscrivo in modo che si accordi alla paginazone
+    public Page<Author> getAuthors(@RequestParam(defaultValue = "0") int page,
+                                   @RequestParam(defaultValue = "5") int size) {
+        return this.authorsService.findAll(page, size);
     }
 
     @GetMapping("/{authorId}")

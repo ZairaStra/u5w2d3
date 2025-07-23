@@ -85,7 +85,7 @@ public class BlogsService {
 
         Blog savedBlog = blogsRepository.save(newBlog);
 
-        log.info("The blog" + savedBlog.getTitle() + " written by " + foundAuthor.getName() + " " + foundAuthor.getSurname() + " has been saved");
+        log.info("The blog " + savedBlog.getTitle() + " written by " + foundAuthor.getName() + " " + foundAuthor.getSurname() + " has been saved");
 
         return savedBlog;
     }

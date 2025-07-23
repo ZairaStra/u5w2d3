@@ -80,7 +80,7 @@ public class AuthorsService {
     public Author saveAuthor(NewAuthorPayload payload) {
 
         authorsRepository.findByEmail(payload.getEmail()).ifPresent(user -> {
-            throw new BadRequestException("L'email " + payload.getEmail() + " è già in uso!");
+            throw new BadRequestException("An author with email " + payload.getEmail() + " is already in our system");
         });
         Author newAuthor = new Author(payload.getName(), payload.getSurname(), payload.getEmail(), payload.getBirthDate());
         newAuthor.setAvatar("https://ui-avatars.com/api/?name=" + payload.getName() + "+" + payload.getSurname());

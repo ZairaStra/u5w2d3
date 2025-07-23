@@ -16,14 +16,16 @@ public class NewBlogPayload {
 //    private String cover;
     private String content;
     private double readingTime;
+    private int authorId;
 
     @Override
     public String toString() {
-        return
+        return "NewBlogPayload{" +
                 "category='" + category + '\'' +
-                        ", title='" + title + '\'' +
-                        ", content='" + content + '\'' +
-                        ", readingTime=" + readingTime;
-
+                ", title='" + title + '\'' +
+                ", content='" + content + '\'' +
+                ", readingTime=" + readingTime +
+                ", authorId=" + authorId +
+                '}';
     }
 }

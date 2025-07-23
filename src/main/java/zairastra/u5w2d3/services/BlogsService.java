@@ -2,14 +2,15 @@ package zairastra.u5w2d3.services;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import zairastra.u5w2d3.entities.Author;
 import zairastra.u5w2d3.entities.Blog;
 import zairastra.u5w2d3.exceptions.NotFoundException;
 import zairastra.u5w2d3.payloads.NewBlogPayload;
 import zairastra.u5w2d3.repositories.BlogsRepository;
-
-import java.util.ArrayList;
-import java.util.List;
 
 //service resta uguale, devi solo ricordarti di injectarlo in controller
 @Service
@@ -19,24 +20,23 @@ public class BlogsService {
     @Autowired
     private BlogsRepository blogsRepository;
 
-    private List<Blog> blogsFakeDatabase = new ArrayList<>();
+    @Autowired
+    private AuthorsService authorsService;
+
+//    private List<Blog> blogsFakeDatabase = new ArrayList<>();
 
     //i metodi crud sono 5 -> mi servono 5 metodi
 
     //1.cerca tutto
-    public List<Blog> findAll() {
-        return this.blogsFakeDatabase;
+    public Page<Blog> findAll(int pageNumb, int pageSize) {
+        if (pageSize > 20) pageSize = 20;
+        Pageable pageable = PageRequest.of(pageNumb, pageSize);
+        return blogsRepository.findAll(pageable);
     }
 
     //2.cerca per id
     public Blog findBlogById(int blogId) {
-        Blog found = null;
-        for (Blog blog : this.blogsFakeDatabase) {
-            if (blog.getId() == blogId) found = blog;
-        }
-        //passa il parametro dell'id qui per scrivere il messaggio di eccezione nell'exception
-        if (found == null) throw new NotFoundException(blogId);
-        return found;
+        return blogsRepository.findById(blogId).orElseThrow(() -> new NotFoundException(blogId));
     }
 
     //3.cerca per id e modifica
@@ -49,8 +49,11 @@ public class BlogsService {
         found.setContent(payload.getContent());
         found.setReadingTime(payload.getReadingTime());
 
-        if (found == null) throw new NotFoundException(blogId);
-        return found;
+        Blog updatedBlog = blogsRepository.save(found);
+
+        log.info("The blog " + updatedBlog.getTitle() + " has been updated");
+
+        return updatedBlog;
     }
 
 
@@ -58,19 +61,33 @@ public class BlogsService {
     public void findBlogByIdAndDelete(int blogId) {
         //riuso il metodo findBlogById
         Blog found = findBlogById(blogId);
-
-        if (found == null) throw new NotFoundException(blogId);
-        this.blogsFakeDatabase.remove(found);
+        blogsRepository.delete(found);
     }
 
 
     //5.salva
+//    public Blog saveBlog(NewBlogPayload payload) {
+//        Blog newBlog = new Blog(payload.getCategory(), payload.getTitle(), payload.getContent(), payload.getReadingTime());
+//        this.blogsFakeDatabase.add(newBlog);
+//
+//        log.info("The blog " + payload.getTitle() + " has been saved");
+//        return newBlog;
+//    }
     public Blog saveBlog(NewBlogPayload payload) {
-        Blog newBlog = new Blog(payload.getCategory(), payload.getTitle(), payload.getContent(), payload.getReadingTime());
-        this.blogsFakeDatabase.add(newBlog);
+        // Verifico che l'autore esista
+        Author foundAuthor = authorsService.findAuthorById(payload.getAuthorId());
 
-        log.info("The blog " + payload.getTitle() + " has been saved");
-        return newBlog;
+        Blog newBlog = new Blog(payload.getCategory(), payload.getTitle(), payload.getContent(), payload.getReadingTime());
+
+        newBlog.setAuthor(foundAuthor);
+
+        newBlog.setCover("https://picsum.photos/200/300");
+
+        Blog savedBlog = blogsRepository.save(newBlog);
+
+        log.info("The blog" + savedBlog.getTitle() + " written by " + foundAuthor.getName() + " " + foundAuthor.getSurname() + " has been saved");
+
+        return savedBlog;
     }
 
 

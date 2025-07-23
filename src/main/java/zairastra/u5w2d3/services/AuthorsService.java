@@ -26,7 +26,7 @@ public class AuthorsService {
     public Page<Author> findAll(int pageNumb, int pageSize) {
         if (pageSize > 20) pageSize = 20;
         Pageable pageable = PageRequest.of(pageNumb, pageSize);
-        return this.authorsRepository.findAll(pageable);
+        return authorsRepository.findAll(pageable);
     }
 
     //2.cerca per id
@@ -40,16 +40,16 @@ public class AuthorsService {
 //        return found;
 
         //ESISTE UNA VERSOPE SUPREBREVE:
-        return this.authorsRepository.findById(authorId).orElseThrow(() -> new NotFoundException(authorId));
+        return authorsRepository.findById(authorId).orElseThrow(() -> new NotFoundException(authorId));
     }
 
     //3.cerca per id e modifica
     public Author findAuthorByIdAndUpdate(int authorId, NewAuthorPayload payload) {
-        Author found = this.findAuthorById(authorId); //NotFoundException è già dentro questo metodo (vd sopra)
+        Author found = findAuthorById(authorId); //NotFoundException è già dentro questo metodo (vd sopra)
 
         if (!found.getEmail().equals(payload.getEmail())) {
             authorsRepository.findByEmail(payload.getEmail()).ifPresent(author -> {
-                throw new BadRequestException(author.getEmail() + "is already in our system");
+                throw new BadRequestException(author.getEmail() + " is already in our system");
             });
         }
 
@@ -70,22 +70,22 @@ public class AuthorsService {
 
     //4.cerca per id e cancella - VOID
     public void findAuthorByIdAndDelete(int authorId) {
-        Author found = this.findAuthorById(authorId); //NotFoundException è già dentro questo metodo (vd sopra)
+        Author found = findAuthorById(authorId); //NotFoundException è già dentro questo metodo (vd sopra)
 //        if (found == null) throw new NotFoundException(authorId);
-        this.authorsRepository.delete(found);
+        authorsRepository.delete(found);
     }
 
 
     //5.salva
     public Author saveAuthor(NewAuthorPayload payload) {
 
-        this.authorsRepository.findByEmail(payload.getEmail()).ifPresent(user -> {
+        authorsRepository.findByEmail(payload.getEmail()).ifPresent(user -> {
             throw new BadRequestException("L'email " + payload.getEmail() + " è già in uso!");
         });
         Author newAuthor = new Author(payload.getName(), payload.getSurname(), payload.getEmail(), payload.getBirthDate());
         newAuthor.setAvatar("https://ui-avatars.com/api/?name=" + payload.getName() + "+" + payload.getSurname());
 
-        Author savedAuthor = this.authorsRepository.save(newAuthor);
+        Author savedAuthor = authorsRepository.save(newAuthor);
 
         log.info("The author " + payload.getName() + " " + payload.getSurname() + " has been saved");
         return savedAuthor;

@@ -8,13 +8,12 @@ package zairastra.u5w2d3.controllers;
 //se avessi un db dovrei anche fare i repository per accedere alle query base
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import zairastra.u5w2d3.entities.Blog;
 import zairastra.u5w2d3.payloads.NewBlogPayload;
 import zairastra.u5w2d3.services.BlogsService;
-
-import java.util.List;
 
 @RestController// ricorda: sempre Rest, non solo Controller
 @RequestMapping("/blogs") //mi serve per non riscrivere sempre l'url, nei metodi in cui serve una path la aggiungo
@@ -25,8 +24,9 @@ public class BlogController {
 
     //1.cerca tutto - GET lista
     @GetMapping
-    public List<Blog> getBlogs() {
-        return this.blogsService.findAll();
+    public Page<Blog> getBlogs(@RequestParam(defaultValue = "0") int page,
+                               @RequestParam(defaultValue = "5") int size) {
+        return this.blogsService.findAll(page, size);
     }
 
     //2.cerca per id - GET singolo

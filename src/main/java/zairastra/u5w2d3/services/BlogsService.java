@@ -79,6 +79,7 @@ public class BlogsService {
 
         Blog newBlog = new Blog(payload.getCategory(), payload.getTitle(), payload.getContent(), payload.getReadingTime());
 
+        //queste due righe sono sbagliate, devi mettere tutto nel costruttore e poi li passi nel newBlog
         newBlog.setAuthor(foundAuthor);
 
         newBlog.setCover("https://picsum.photos/200/300");

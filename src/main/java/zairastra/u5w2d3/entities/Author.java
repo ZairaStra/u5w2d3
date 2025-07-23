@@ -1,19 +1,24 @@
 package zairastra.u5w2d3.entities;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import jakarta.persistence.*;
+import lombok.*;
 
 import java.time.LocalDate;
-import java.util.Random;
 
+@Entity
+@Table(name = "authors")
 @Getter
 @Setter
+@NoArgsConstructor
 @ToString
+
 public class Author {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "author_id", nullable = false)
     @Setter(AccessLevel.NONE)
     private int id;
+
     private String name;
     private String surname;
     private String email;
@@ -21,9 +26,7 @@ public class Author {
     private String avatar;
 
     public Author(String name, String surname, String email, LocalDate birthDate) {
-        //non essendoci db uso Random
-        Random rndm = new Random();
-        this.id = rndm.nextInt(1, 100);
+
         this.name = name;
         this.surname = surname;
         this.email = email;

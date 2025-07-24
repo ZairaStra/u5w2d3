@@ -12,8 +12,7 @@ import lombok.Setter;
 public class NewBlogPayload {
     private String category;
     private String title;
-    //escludo la gestione dell'url dell'immagine perchè non so farla
-//    private String cover;
+    //    private String cover;
     private String content;
     private double readingTime;
     private int authorId;

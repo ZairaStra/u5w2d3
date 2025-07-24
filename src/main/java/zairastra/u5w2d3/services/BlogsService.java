@@ -77,12 +77,12 @@ public class BlogsService {
         // Verifico che l'autore esista
         Author foundAuthor = authorsService.findAuthorById(payload.getAuthorId());
 
-        Blog newBlog = new Blog(payload.getCategory(), payload.getTitle(), payload.getContent(), payload.getReadingTime());
+        Blog newBlog = new Blog(payload.getCategory(), payload.getTitle(), "https://picsum.photos/200/300", payload.getContent(), payload.getReadingTime(), foundAuthor);
 
-        //queste due righe sono sbagliate, devi mettere tutto nel costruttore e poi li passi nel newBlog
-        newBlog.setAuthor(foundAuthor);
-
-        newBlog.setCover("https://picsum.photos/200/300");
+//        //queste due righe sono sbagliate, devi mettere tutto nel costruttore e poi li passi nel newBlog
+//        newBlog.setAuthor(foundAuthor);
+//
+//        newBlog.setCover("https://picsum.photos/200/300");
 
         Blog savedBlog = blogsRepository.save(newBlog);
 

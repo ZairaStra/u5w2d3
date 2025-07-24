@@ -29,12 +29,13 @@ public class Blog {
     @JoinColumn(name = "author_id")
     private Author author;
 
-    public Blog(String category, String title, String content, double readingTime) {
+    public Blog(String category, String title, String cover, String content, double readingTime, Author author) {
         this.category = category;
         this.title = title;
+        this.cover = cover;
         this.content = content;
         this.readingTime = readingTime;
-        //non mi ero resa conto che la traccia chiedeva una cover dinamicamente creata dal servere
-        this.cover = "https://picsum.photos/200/300";
+        this.author = author;
+
     }
 }

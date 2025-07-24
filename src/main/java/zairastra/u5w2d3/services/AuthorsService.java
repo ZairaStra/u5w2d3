@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import zairastra.u5w2d3.entities.Author;
 import zairastra.u5w2d3.exceptions.BadRequestException;
 import zairastra.u5w2d3.exceptions.NotFoundException;
-import zairastra.u5w2d3.payloads.NewAuthorPayload;
+import zairastra.u5w2d3.payloads.NewAuthorsDTO;
 import zairastra.u5w2d3.repositories.AuthorsRepository;
 
 @Service
@@ -44,21 +44,21 @@ public class AuthorsService {
     }
 
     //3.cerca per id e modifica
-    public Author findAuthorByIdAndUpdate(int authorId, NewAuthorPayload payload) {
+    public Author findAuthorByIdAndUpdate(int authorId, NewAuthorsDTO payload) {
         Author found = findAuthorById(authorId); //NotFoundException è già dentro questo metodo (vd sopra)
 
-        if (!found.getEmail().equals(payload.getEmail())) {
-            authorsRepository.findByEmail(payload.getEmail()).ifPresent(author -> {
+        if (!found.getEmail().equals(payload.email())) {
+            authorsRepository.findByEmail(payload.email()).ifPresent(author -> {
                 throw new BadRequestException(author.getEmail() + " is already in our system");
             });
         }
 
-        found.setName(payload.getName());
-        found.setSurname(payload.getSurname());
-        found.setEmail(payload.getEmail());
-        found.setBirthDate(payload.getBirthDate());
+        found.setName(payload.name());
+        found.setSurname(payload.surname());
+        found.setEmail(payload.email());
+        found.setBirthDate(payload.birthDate());
 
-        found.setAvatar("https://ui-avatars.com/api/?name=" + payload.getName() + "+" + payload.getSurname());
+        found.setAvatar("https://ui-avatars.com/api/?name=" + payload.name() + "+" + payload.surname());
 
         Author updatedAuthor = authorsRepository.save(found);
 
@@ -77,17 +77,17 @@ public class AuthorsService {
 
 
     //5.salva
-    public Author saveAuthor(NewAuthorPayload payload) {
-
-        authorsRepository.findByEmail(payload.getEmail()).ifPresent(user -> {
-            throw new BadRequestException("An author with email " + payload.getEmail() + " is already in our system");
+    public Author saveAuthor(NewAuthorsDTO payload) {
+//SENZA GET COI DTO RICORDATELO!!!
+        authorsRepository.findByEmail(payload.email()).ifPresent(user -> {
+            throw new BadRequestException("An author with email " + payload.email() + " is already in our system");
         });
-        Author newAuthor = new Author(payload.getName(), payload.getSurname(), payload.getEmail(), payload.getBirthDate());
-        newAuthor.setAvatar("https://ui-avatars.com/api/?name=" + payload.getName() + "+" + payload.getSurname());
+        Author newAuthor = new Author(payload.name(), payload.surname(), payload.email(), payload.birthDate());
+        newAuthor.setAvatar("https://ui-avatars.com/api/?name=" + payload.name() + "+" + payload.surname());
 
         Author savedAuthor = authorsRepository.save(newAuthor);
 
-        log.info("The author " + payload.getName() + " " + payload.getSurname() + " has been saved");
+        log.info("The author " + payload.name() + " " + payload.surname() + " has been saved");
         return savedAuthor;
     }
 }

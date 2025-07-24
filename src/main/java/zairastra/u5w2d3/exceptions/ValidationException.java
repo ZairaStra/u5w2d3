@@ -6,6 +6,7 @@ import java.util.List;
 
 @Getter
 public class ValidationException extends RuntimeException {
+    //lista di messaggi di errori di validazione da aggiungere a super
     private List<String> errorMessages;
 
     public ValidationException(List<String> errorMessages) {

@@ -15,6 +15,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import zairastra.u5w2d3.entities.Blog;
 import zairastra.u5w2d3.exceptions.ValidationException;
+import zairastra.u5w2d3.payloads.NewBlogResponseDTO;
 import zairastra.u5w2d3.payloads.NewBlogsDTO;
 import zairastra.u5w2d3.services.BlogsService;
 
@@ -61,7 +62,7 @@ public class BlogController {
     //5.salva - POST
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Blog createBlog(@RequestBody @Validated NewBlogsDTO payload, BindingResult validationResult) {
+    public NewBlogResponseDTO createBlog(@RequestBody @Validated NewBlogsDTO payload, BindingResult validationResult) {
         if (validationResult.hasErrors()) {
             //creo una lista di errori di validazione
             List<String> errors = validationResult.getFieldErrors().stream()
@@ -72,7 +73,8 @@ public class BlogController {
             throw new ValidationException(errors);
         }
 //dovrei fare un payload per la risposta di blog ma non finirò mai intempo se lo faccio
-        return this.blogsService.saveBlog(payload);
+        Blog savedBlog = this.blogsService.saveBlog(payload);
+        return new NewBlogResponseDTO(savedBlog.getTitle());
     }
 }
 

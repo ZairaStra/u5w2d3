@@ -10,10 +10,15 @@ package zairastra.u5w2d3.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import zairastra.u5w2d3.entities.Blog;
-import zairastra.u5w2d3.payloads.NewBlogPayload;
+import zairastra.u5w2d3.exceptions.ValidationException;
+import zairastra.u5w2d3.payloads.NewBlogsDTO;
 import zairastra.u5w2d3.services.BlogsService;
+
+import java.util.List;
 
 @RestController// ricorda: sempre Rest, non solo Controller
 @RequestMapping("/blogs") //mi serve per non riscrivere sempre l'url, nei metodi in cui serve una path la aggiungo
@@ -40,8 +45,8 @@ public class BlogController {
     //3.cerca per id e modifica - PUT
     @PutMapping("/{blogId}") //in questo caso non solo mi serve l apath ma anche il payload per modificare i campi
     //in pratica il payload serve ogni volta che mi servono dati che provengono dall'utente - anche nalla post/save
-    public Blog getBlogByIdAndUpdate(@PathVariable int blogId, @RequestBody NewBlogPayload body) {
-        return this.blogsService.findBlogByIdAndUpdate(blogId, body);
+    public Blog getBlogByIdAndUpdate(@PathVariable int blogId, @RequestBody @Validated NewBlogsDTO payload) {
+        return this.blogsService.findBlogByIdAndUpdate(blogId, payload);
     }
 
     //4.cerca per id ed elimina - DELETE
@@ -55,8 +60,19 @@ public class BlogController {
 
     //5.salva - POST
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED) //serve per ottenere uno statuscode specifico, non solo ok
-    public Blog createBlog(@RequestBody NewBlogPayload body) {
-        return this.blogsService.saveBlog(body);
+    @ResponseStatus(HttpStatus.CREATED)
+    public Blog createBlog(@RequestBody @Validated NewBlogsDTO payload, BindingResult validationResult) {
+        if (validationResult.hasErrors()) {
+            //creo una lista di errori di validazione
+            List<String> errors = validationResult.getFieldErrors().stream()
+                    //li mappo per raggiungere SOLO IL MESSAGGIO
+                    .map(fieldError -> fieldError.getDefaultMessage())
+                    //li richiudo in una lista da stampare
+                    .toList();
+            throw new ValidationException(errors);
+        }
+//dovrei fare un payload per la risposta di blog ma non finirò mai intempo se lo faccio
+        return this.blogsService.saveBlog(payload);
     }
 }
+

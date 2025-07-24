@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import zairastra.u5w2d3.entities.Author;
 import zairastra.u5w2d3.entities.Blog;
 import zairastra.u5w2d3.exceptions.NotFoundException;
-import zairastra.u5w2d3.payloads.NewBlogPayload;
+import zairastra.u5w2d3.payloads.NewBlogsDTO;
 import zairastra.u5w2d3.repositories.BlogsRepository;
 
 //service resta uguale, devi solo ricordarti di injectarlo in controller
@@ -40,14 +40,14 @@ public class BlogsService {
     }
 
     //3.cerca per id e modifica
-    public Blog findBlogByIdAndUpdate(int blogId, NewBlogPayload payload) {
+    public Blog findBlogByIdAndUpdate(int blogId, NewBlogsDTO payload) {
         //riuso il metodo findBlogById
         Blog found = findBlogById(blogId);
 
-        found.setCategory(payload.getCategory());
-        found.setTitle(payload.getTitle());
-        found.setContent(payload.getContent());
-        found.setReadingTime(payload.getReadingTime());
+        found.setCategory(payload.category());
+        found.setTitle(payload.title());
+        found.setContent(payload.content());
+        found.setReadingTime(payload.readingTime());
 
         Blog updatedBlog = blogsRepository.save(found);
 
@@ -73,11 +73,11 @@ public class BlogsService {
 //        log.info("The blog " + payload.getTitle() + " has been saved");
 //        return newBlog;
 //    }
-    public Blog saveBlog(NewBlogPayload payload) {
+    public Blog saveBlog(NewBlogsDTO payload) {
         // Verifico che l'autore esista
-        Author foundAuthor = authorsService.findAuthorById(payload.getAuthorId());
+        Author foundAuthor = authorsService.findAuthorById(payload.authorId());
 
-        Blog newBlog = new Blog(payload.getCategory(), payload.getTitle(), "https://picsum.photos/200/300", payload.getContent(), payload.getReadingTime(), foundAuthor);
+        Blog newBlog = new Blog(payload.category(), payload.title(), "https://picsum.photos/200/300", payload.content(), payload.readingTime(), foundAuthor);
 
 //        //queste due righe sono sbagliate, devi mettere tutto nel costruttore e poi li passi nel newBlog
 //        newBlog.setAuthor(foundAuthor);
@@ -86,7 +86,7 @@ public class BlogsService {
 
         Blog savedBlog = blogsRepository.save(newBlog);
 
-        log.info("The blog " + savedBlog.getTitle() + " written by " + foundAuthor.getName() + " " + foundAuthor.getSurname() + " has been saved");
+        log.info("The blog " + payload.title() + " written by " + foundAuthor.getName() + " " + foundAuthor.getSurname() + " has been saved");
 
         return savedBlog;
     }
